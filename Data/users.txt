@@ -1,0 +1,20 @@
+ADMIN|admin|7572152304808164
+USER|Rafiq Ahmed|01711111111|22|Male|Khulna|Fazlul Haque Hall|B+|229485567911706
+USER|Nusrat Jahan|01722222222|21|Female|Jashore|Rokeya Hall|O+|229485567911706
+USER|Sabbir Hossain|01733333333|23|Male|Dhaka|Amar Ekushey Hall|A+|229485567911706
+USER|Tanvir Rahman|01744444444|22|Male|Bagerhat|Khan Jahan Ali Hall|O-|229485567911706
+USER|Mahin Islam|01755555555|24|Male|Satkhira|Lalan Shah Hall|AB+|229485567911706
+USER|Farhana Akter|01766666666|20|Female|Narail|Rokeya Hall|A-|229485567911706
+USER|Imran Kabir|01777777777|23|Male|Kushtia|Dr. M. A. Rashid Hall|B-|229485567911706
+USER|Arif Mahmud|01788888888|22|Male|Jhenaidah|Shaheed Smrity Hall|AB-|229485567911706
+USER|aa|01792844675|22|Male|aaa|Fazlul Haque Hall|O+|6383257999
+USER|soummo sanjay deb|01904231437|21|Male|khulna|Rokeya Hall|A+|210714636441
+USER|musi|01734567821|21|Male|khulna|Amar Ekushey Hall|A+|210714636441
+USER|munsi|01734567822|21|Male|khulna|Rokeya Hall|A+|210714636441
+USER|rahim|01959205297|21|Male|khulna|Dr. M. A. Rashid Hall|A+|6383257999
+USER|sadman|01277777777|21|Male|khulna|Fazlul Haque Hall|AB+|6383257999
+USER|simu|01233333333|21|Male|khulna|Dr. M. A. Rashid Hall|A+|6383256841
+USER|simu|01904231436|21|Male|khulna|Dr. M. A. Rashid Hall|A+|6383257999
+USER|rafi|01904231435|21|Male|khulna|Dr. M. A. Rashid Hall|A+|6383257999
+USER|rakib|01904231434|21|Male|khulna|Dr. M. A. Rashid Hall|A+|6383257999
+USER|saif|01904231438|21|Male|khulna|Dr. M. A. Rashid Hall|A+|6383257999

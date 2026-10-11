@@ -1,0 +1,18 @@
+NODE|KUET Medical Center
+NODE|Rokeya Hall
+NODE|Amar Ekushey Hall
+NODE|Fazlul Haque Hall
+NODE|Khan Jahan Ali Hall
+NODE|Lalan Shah Hall
+NODE|Dr. M. A. Rashid Hall
+NODE|Shaheed Smrity Hall
+EDGE|KUET Medical Center|Rokeya Hall|300|3
+EDGE|KUET Medical Center|Amar Ekushey Hall|600|6
+EDGE|KUET Medical Center|Fazlul Haque Hall|900|9
+EDGE|Rokeya Hall|Amar Ekushey Hall|400|4
+EDGE|Rokeya Hall|Fazlul Haque Hall|700|7
+EDGE|Amar Ekushey Hall|Lalan Shah Hall|500|5
+EDGE|Fazlul Haque Hall|Khan Jahan Ali Hall|700|7
+EDGE|Khan Jahan Ali Hall|Dr. M. A. Rashid Hall|400|4
+EDGE|Lalan Shah Hall|Shaheed Smrity Hall|600|6
+EDGE|Dr. M. A. Rashid Hall|Shaheed Smrity Hall|800|8

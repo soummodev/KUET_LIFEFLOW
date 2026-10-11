@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KUET LifeFlow | Smart Blood Bank System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="top-banner" id="topBanner">
+        <div class="banner-content">
+            <span class="badge badge-emergency"><i class="fas fa-heartbeat pulse-icon"></i> KUET LIFEFLOW</span>
+            <span class="banner-text">Smart Emergency Blood Network • Connected to KUET Medical Center</span>
+            <div class="server-status"><span class="status-dot"></span> <span id="serverStatusText">System Active</span></div>
+        </div>
+    </div>
+
+    <header class="navbar">
+        <div class="nav-container">
+            <a href="#" class="brand" onclick="app.showTab('dashboard')">
+                <div class="brand-icon">
+                    <i class="fas fa-droplet"></i>
+                </div>
+                <div class="brand-info">
+                    <span class="brand-title">KUET <span>LifeFlow</span></span>
+                    <span class="brand-sub">Smart Blood Network</span>
+                </div>
+            </a>
+
+            <nav class="nav-links">
+                <button class="nav-btn active" onclick="app.showTab('dashboard')" id="nav-dashboard">
+                    <i class="fas fa-chart-pie"></i> Dashboard
+                </button>
+                <button class="nav-btn" onclick="app.showTab('donors')" id="nav-donors">
+                    <i class="fas fa-users"></i> Donors
+                </button>
+                <button class="nav-btn" onclick="app.showTab('requests')" id="nav-requests">
+                    <i class="fas fa-hand-holding-medical"></i> Requests <span class="nav-badge" id="pendingBadge">0</span>
+                </button>
+                <button class="nav-btn" onclick="app.showTab('campus-map')" id="nav-campus-map">
+                    <i class="fas fa-route"></i> Campus Map & Nearest Donor
+                </button>
+                <button class="nav-btn" onclick="app.showTab('compatibility')" id="nav-compatibility">
+                    <i class="fas fa-sitemap"></i> Compatibility Guide
+                </button>
+                <button class="nav-btn" onclick="app.showTab('reports')" id="nav-reports">
+                    <i class="fas fa-file-waveform"></i> Reports & Analytics
+                </button>
+            </nav>
+
+            <div class="nav-actions">
+                <button class="theme-toggle-btn" id="themeToggle" title="Toggle Theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <div id="authNavContainer">
+                    <button class="btn btn-outline" onclick="app.openLoginModal()">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </button>
+                    <button class="btn btn-primary" onclick="app.openRegisterModal()">
+                        <i class="fas fa-user-plus"></i> Register
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-container">
+        
+        <section id="tab-dashboard" class="tab-content active">
+            <div class="hero-card">
+                <div class="hero-text">
+                    <div class="hero-badge"><i class="fas fa-shield-heart"></i> Save a Life • Donate Blood</div>
+                    <h1>KUET LifeFlow — Smart Blood Management System</h1>
+                    <p>Instant blood compatibility matching, prioritized emergency dispatch, and shortest-route campus donor routing across KUET halls.</p>
+                    <div class="hero-btns">
+                        <button class="btn btn-emergency btn-lg" onclick="app.openRequestModal(true)">
+                            <i class="fas fa-ambulance"></i> Emergency Request
+                        </button>
+                        <button class="btn btn-primary btn-lg" onclick="app.showTab('donors')">
+                            <i class="fas fa-search"></i> Find a Donor
+                        </button>
+                        <button class="btn btn-secondary btn-lg" onclick="app.showTab('campus-map')">
+                            <i class="fas fa-map-location-dot"></i> Nearest Donor Finder
+                        </button>
+                    </div>
+                </div>
+                <div class="hero-stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-icon icon-stock"><i class="fas fa-boxes-stacked"></i></div>
+                        <div class="stat-data">
+                            <h3 id="statTotalStock">--</h3>
+                            <p>Units in Stock</p>
+                        </div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-icon icon-donors"><i class="fas fa-user-check"></i></div>
+                        <div class="stat-data">
+                            <h3 id="statAvailableDonors">--</h3>
+                            <p>Available Donors</p>
+                        </div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-icon icon-requests"><i class="fas fa-clipboard-check"></i></div>
+                        <div class="stat-data">
+                            <h3 id="statFulfilledRequests">--</h3>
+                            <p>Fulfilled Requests</p>
+                        </div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-icon icon-emergency"><i class="fas fa-truck-medical"></i></div>
+                        <div class="stat-data">
+                            <h3 id="statEmergencyRequests">--</h3>
+                            <p>Emergency Requests</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-card mb-4">
+                <div class="card-header">
+                    <h2><i class="fas fa-vial-circle-check text-primary"></i> Quick Compatibility Checker</h2>
+                    <span class="badge badge-info">Matching Guide</span>
+                </div>
+                <div class="checker-flex">
+                    <div class="checker-input-group">
+                        <label>Donor Blood Group:</label>
+                        <select id="quickDonorGroup" class="form-control">
+                            <option value="O-">O- (Universal Donor)</option>
+                            <option value="O+">O+</option>
+                            <option value="A-">A-</option>
+                            <option value="A+">A+</option>
+                            <option value="B-">B-</option>
+                            <option value="B+">B+</option>
+                            <option value="AB-">AB-</option>
+                            <option value="AB+">AB+ (Universal Recipient)</option>
+                        </select>
+                    </div>
+                    <div class="checker-arrow"><i class="fas fa-arrow-right"></i></div>
+                    <div class="checker-input-group">
+                        <label>Patient Blood Group:</label>
+                        <select id="quickPatientGroup" class="form-control">
+                            <option value="A+">A+</option>
+                            <option value="A-">A-</option>
+                            <option value="B+">B+</option>
+                            <option value="B-">B-</option>
+                            <option value="AB+">AB+</option>
+                            <option value="AB-">AB-</option>
+                            <option value="O+">O+</option>
+                            <option value="O-">O-</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" onclick="app.checkQuickCompatibility()">
+                        <i class="fas fa-check-circle"></i> Verify Match
+                    </button>
+                    <div id="quickResult" class="checker-result"></div>
+                </div>
+            </div>
+
+            <div class="section-title">
+                <h2><i class="fas fa-droplet text-primary"></i> Real-time Blood Stock Inventory</h2>
+                <span class="text-muted">Live sync with central blood vault</span>
+            </div>
+            <div class="blood-grid" id="bloodStockGrid">
+            </div>
+
+            <div class="dashboard-split mt-4">
+                <div class="glass-card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-layer-group text-primary"></i> Live Request Queue</h2>
+                        <button class="btn btn-sm btn-outline" onclick="app.showTab('requests')">View All</button>
+                    </div>
+                    <div class="queue-container">
+                        <div class="queue-column">
+                            <div class="queue-heading emergency">
+                                <span><i class="fas fa-circle-exclamation"></i> Emergency Requests (Priority 1)</span>
+                                <span class="badge badge-emergency" id="dashEmergencyCount">0</span>
+                            </div>
+                            <div class="queue-list" id="dashEmergencyList">
+                                <div class="empty-state-sm"><i class="fas fa-check"></i> No emergency requests</div>
+                            </div>
+                        </div>
+                        <div class="queue-column">
+                            <div class="queue-heading normal">
+                                <span><i class="fas fa-clock"></i> Regular Requests (Priority 2)</span>
+                                <span class="badge badge-info" id="dashNormalCount">0</span>
+                            </div>
+                            <div class="queue-list" id="dashNormalList">
+                                <div class="empty-state-sm"><i class="fas fa-check"></i> No normal requests</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-clock-rotate-left text-primary"></i> Recent Activity Log</h2>
+                        <span class="badge badge-secondary">Live Stream</span>
+                    </div>
+                    <div class="activity-feed" id="dashboardActivityFeed">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="tab-donors" class="tab-content">
+            <div class="glass-card">
+                <div class="card-header flex-between">
+                    <div>
+                        <h2><i class="fas fa-users text-primary"></i> KUET Blood Donors Directory</h2>
+                        <p class="text-muted">Search available donors across all KUET halls with 90-day eligibility rule validation.</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="app.handleBecomeDonorClick()">
+                        <i class="fas fa-plus-circle"></i> Become a Donor
+                    </button>
+                </div>
+
+                <div class="filter-bar">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="donorSearchInput" placeholder="Search by name, phone or hall..." oninput="app.loadDonors()">
+                    </div>
+                    <div class="filter-group">
+                        <select id="donorGroupFilter" class="form-control" onchange="app.loadDonors()">
+                            <option value="">All Blood Groups</option>
+                            <option value="A+">A+</option>
+                            <option value="A-">A-</option>
+                            <option value="B+">B+</option>
+                            <option value="B-">B-</option>
+                            <option value="AB+">AB+</option>
+                            <option value="AB-">AB-</option>
+                            <option value="O+">O+</option>
+                            <option value="O-">O-</option>
+                        </select>
+                        <select id="donorHallFilter" class="form-control" onchange="app.loadDonors()">
+                            <option value="">All Halls / Locations</option>
+                        </select>
+                        <label class="toggle-checkbox">
+                            <input type="checkbox" id="donorAvailableOnly" onchange="app.loadDonors()" checked>
+                            <span class="toggle-label">Only Available Now</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="table-responsive mt-3">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Donor Name</th>
+                                <th>Blood Group</th>
+                                <th>KUET Hall</th>
+                                <th>Contact Phone</th>
+                                <th>Last Donated</th>
+                                <th>Eligibility (90 Days)</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="donorsTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section id="tab-requests" class="tab-content">
+            <div class="glass-card">
+                <div class="card-header flex-between">
+                    <div>
+                        <h2><i class="fas fa-hand-holding-medical text-primary"></i> Blood Requests Management</h2>
+                        <p class="text-muted">Track pending requests, dispatch priorities, and issue fulfillment.</p>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn btn-emergency" onclick="app.openRequestModal(true)">
+                            <i class="fas fa-triangle-exclamation"></i> Emergency Request
+                        </button>
+                        <button class="btn btn-primary" onclick="app.openRequestModal(false)">
+                            <i class="fas fa-plus"></i> New Request
+                        </button>
+                    </div>
+                </div>
+
+                <div class="filter-bar">
+                    <div class="filter-pills">
+                        <button class="pill-btn active" onclick="app.filterRequests('all')">All</button>
+                        <button class="pill-btn" onclick="app.filterRequests('Pending')">Pending Queue</button>
+                        <button class="pill-btn" onclick="app.filterRequests('Fulfilled')">Fulfilled</button>
+                        <button class="pill-btn" onclick="app.filterRequests('Rejected')">Rejected</button>
+                    </div>
+                </div>
+
+                <div class="table-responsive mt-3">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Patient Name</th>
+                                <th>Group</th>
+                                <th>Units</th>
+                                <th>Delivery Location</th>
+                                <th>Type</th>
+                                <th>Requested By</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="requestsTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section id="tab-campus-map" class="tab-content">
+            <div class="glass-card">
+                <div class="card-header">
+                    <div>
+                        <h2><i class="fas fa-route text-primary"></i> KUET Campus Hall Network & Nearest Donor Finder</h2>
+                        <p class="text-muted">Find the closest available blood donor based on walking route and shortest travel time across KUET halls.</p>
+                    </div>
+                    <span class="badge badge-info">Campus Routing</span>
+                </div>
+
+                <div class="bfs-control-box">
+                    <div class="form-row">
+                        <div class="form-group col">
+                            <label><i class="fas fa-location-dot"></i> Starting Location:</label>
+                            <select id="bfsStartLocation" class="form-control">
+                                <option value="KUET Medical Center">KUET Medical Center (Default)</option>
+                                <option value="Rokeya Hall">Rokeya Hall</option>
+                                <option value="Amar Ekushey Hall">Amar Ekushey Hall</option>
+                                <option value="Fazlul Haque Hall">Fazlul Haque Hall</option>
+                                <option value="Khan Jahan Ali Hall">Khan Jahan Ali Hall</option>
+                                <option value="Lalan Shah Hall">Lalan Shah Hall</option>
+                                <option value="Dr. M. A. Rashid Hall">Dr. M. A. Rashid Hall</option>
+                                <option value="Shaheed Smrity Hall">Shaheed Smrity Hall</option>
+                            </select>
+                        </div>
+                        <div class="form-group col">
+                            <label><i class="fas fa-droplet"></i> Target Blood Group Needed:</label>
+                            <select id="bfsBloodGroup" class="form-control">
+                                <option value="A+">A+</option>
+                                <option value="A-">A-</option>
+                                <option value="B+">B+</option>
+                                <option value="B-">B-</option>
+                                <option value="AB+">AB+</option>
+                                <option value="AB-">AB-</option>
+                                <option value="O+">O+</option>
+                                <option value="O-">O-</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-auto align-end">
+                            <button class="btn btn-primary btn-lg" onclick="app.runBfsSearch()">
+                                <i class="fas fa-satellite-dish"></i> Find Nearest Donor
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="bfsResultsContainer" class="bfs-results-container mt-4" style="display: none;">
+                    <div class="bfs-summary-card" id="bfsSummaryCard">
+                    </div>
+
+                    <div class="bfs-split-grid mt-3">
+                        <div class="bfs-path-box">
+                            <h3><i class="fas fa-timeline text-primary"></i> Route Exploration Log</h3>
+                            <pre class="trace-code" id="bfsTraceOutput"></pre>
+                        </div>
+                        <div class="bfs-donors-box">
+                            <h3><i class="fas fa-user-group text-primary"></i> Matching Donors in Selected Hall</h3>
+                            <div id="bfsDonorsList"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="campus-network-preview mt-4">
+                    <h3><i class="fas fa-network-wired text-primary"></i> KUET Campus Halls & Medical Center Connection Map</h3>
+                    <div class="nodes-grid" id="campusNodesGrid">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="tab-compatibility" class="tab-content">
+            <div class="glass-card">
+                <div class="card-header">
+                    <div>
+                        <h2><i class="fas fa-sitemap text-primary"></i> Blood Compatibility & Recipient Guide</h2>
+                        <p class="text-muted">Compatibility chart rooted at O- (Universal Donor). Shows all compatible donor and recipient relationships.</p>
+                    </div>
+                    <span class="badge badge-info">Medical Compatibility</span>
+                </div>
+
+                <div class="tree-explanation">
+                    <div class="expl-item"><span class="badge badge-success">O-</span> Universal Donor: Can donate to all 8 blood groups</div>
+                    <div class="expl-item"><span class="badge badge-info">AB+</span> Universal Recipient: Can receive from all 8 blood groups</div>
+                </div>
+
+                <div class="table-responsive mt-4">
+                    <table class="data-table matrix-table">
+                        <thead>
+                            <tr>
+                                <th>Blood Group</th>
+                                <th>Can Donate To (Compatible Recipients)</th>
+                                <th>Can Receive From (Compatible Donors)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="compatibilityMatrixBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section id="tab-reports" class="tab-content">
+            <div class="glass-card">
+                <div class="card-header flex-between">
+                    <div>
+                        <h2><i class="fas fa-file-waveform text-primary"></i> System Analytics & Historical Reports</h2>
+                        <p class="text-muted">Comprehensive chronological logs and analytics sorted by event date.</p>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn btn-outline" onclick="app.loadDonationReport('desc')"><i class="fas fa-sort-amount-down"></i> Newest First</button>
+                        <button class="btn btn-outline" onclick="app.loadDonationReport('asc')"><i class="fas fa-sort-amount-up"></i> Oldest First</button>
+                    </div>
+                </div>
+
+                <div class="reports-nav">
+                    <button class="tab-pill active" onclick="app.switchReportTab('donations')">Donation History Report</button>
+                    <button class="tab-pill" onclick="app.switchReportTab('requests')">Blood Requests Report</button>
+                    <button class="tab-pill" onclick="app.switchReportTab('summary')">Summary Overview</button>
+                </div>
+
+                <div id="reportDonationsView" class="report-view mt-3">
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Donor Name</th>
+                                    <th>Phone</th>
+                                    <th>Blood Group</th>
+                                    <th>Units</th>
+                                    <th>Donation Date</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reportDonationsBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="reportRequestsView" class="report-view mt-3" style="display:none;">
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Patient</th>
+                                    <th>Group</th>
+                                    <th>Units</th>
+                                    <th>Location</th>
+                                    <th>Emergency</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reportRequestsBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="reportSummaryView" class="report-view mt-3" style="display:none;">
+                    <div class="summary-stats-grid" id="summaryReportGrid"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="tab-admin" class="tab-content">
+            <div class="glass-card">
+                <div class="card-header flex-between">
+                    <div>
+                        <h2><i class="fas fa-shield-halved text-emergency"></i> Admin Command Center</h2>
+                        <p class="text-muted">Master control panel: inventory adjustments, queue execution, donor management.</p>
+                    </div>
+                    <button class="btn btn-outline" onclick="app.logout()">
+                        <i class="fas fa-power-off"></i> Logout Admin
+                    </button>
+                </div>
+
+                <div class="admin-grid mt-3">
+                    <div class="admin-card">
+                        <h3><i class="fas fa-forward-step text-primary"></i> Process Next Emergency Request</h3>
+                        <p>Automatically serves the highest priority request in the queue, allocating compatible blood units.</p>
+                        <button class="btn btn-primary w-100 mt-3" onclick="app.adminProcessQueue()">
+                            <i class="fas fa-play"></i> Process Next Request
+                        </button>
+                    </div>
+
+                    <div class="admin-card">
+                        <h3><i class="fas fa-boxes-stacked text-primary"></i> Stock Inventory Manager</h3>
+                        <form id="adminInventoryForm" onsubmit="app.handleInventoryUpdate(event)" class="mt-2">
+                            <div class="form-row">
+                                <div class="form-group col">
+                                    <label>Blood Group:</label>
+                                    <select id="adminStockGroup" class="form-control" required>
+                                        <option value="A+">A+</option>
+                                        <option value="A-">A-</option>
+                                        <option value="B+">B+</option>
+                                        <option value="B-">B-</option>
+                                        <option value="AB+">AB+</option>
+                                        <option value="AB-">AB-</option>
+                                        <option value="O+">O+</option>
+                                        <option value="O-">O-</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col">
+                                    <label>Action:</label>
+                                    <select id="adminStockAction" class="form-control" required>
+                                        <option value="add">Add Units (+)</option>
+                                        <option value="remove">Remove Units (-)</option>
+                                        <option value="set">Set Exact Amount (=)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col">
+                                    <label>Units:</label>
+                                    <input type="number" id="adminStockUnits" class="form-control" min="1" max="100" value="1" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-secondary w-100 mt-2">
+                                <i class="fas fa-check"></i> Update Inventory
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="admin-card">
+                        <h3><i class="fas fa-hand-holding-droplet text-primary"></i> Record New Donation</h3>
+                        <form id="adminRecordDonationForm" onsubmit="app.handleRecordDonation(event)" class="mt-2">
+                            <div class="form-group">
+                                <label>Donor Phone Number:</label>
+                                <input type="text" id="adminRecordPhone" class="form-control" placeholder="017xxxxxxxx" required>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col">
+                                    <label>Units Donated:</label>
+                                    <input type="number" id="adminRecordUnits" class="form-control" value="1" min="1" max="2" required>
+                                </div>
+                                <div class="form-group col">
+                                    <label>Date (DD-MM-YYYY):</label>
+                                    <input type="text" id="adminRecordDate" class="form-control" placeholder="Leave empty for today">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100 mt-2">
+                                <i class="fas fa-plus"></i> Record & Update Stock
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="admin-card">
+                        <h3><i class="fas fa-key text-primary"></i> Change Admin Password</h3>
+                        <form id="adminPasswordForm" onsubmit="app.handleChangePassword(event)" class="mt-2">
+                            <div class="form-group">
+                                <label>Current Password:</label>
+                                <input type="password" id="adminOldPass" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label>New Password (min 4 chars):</label>
+                                <input type="password" id="adminNewPass" class="form-control" required>
+                            </div>
+                            <button type="submit" class="btn btn-outline w-100 mt-2">
+                                <i class="fas fa-lock"></i> Update Password
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="tab-user-profile" class="tab-content">
+            <div class="glass-card">
+                <div class="card-header flex-between">
+                    <div>
+                        <h2><i class="fas fa-user-circle text-primary"></i> My User Profile</h2>
+                        <p class="text-muted">Manage your donor willingness and view your personal requests.</p>
+                    </div>
+                    <button class="btn btn-outline" onclick="app.logout()">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+
+                <div class="profile-layout mt-3">
+                    <div class="profile-card" id="userProfileDetails">
+                    </div>
+                    <div class="profile-history">
+                        <h3><i class="fas fa-clock-rotate-left text-primary"></i> My Donation & Request Records</h3>
+                        <div id="userPersonalHistory" class="mt-2">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-sign-in-alt text-primary"></i> System Login</h3>
+                <button class="modal-close" onclick="app.closeModal('loginModal')">&times;</button>
+            </div>
+            <form id="loginForm" onsubmit="app.handleLogin(event)">
+                <div class="form-group">
+                    <label>Login As:</label>
+                    <div class="role-selector">
+                        <label class="role-option">
+                            <input type="radio" name="loginRole" value="user" checked onchange="app.toggleRoleFields()">
+                            <span><i class="fas fa-user"></i> Registered User / Donor</span>
+                        </label>
+                        <label class="role-option">
+                            <input type="radio" name="loginRole" value="admin" onchange="app.toggleRoleFields()">
+                            <span><i class="fas fa-user-shield"></i> System Admin</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label id="loginUsernameLabel">Phone Number:</label>
+                    <input type="text" id="loginUsername" class="form-control" placeholder="017xxxxxxxx (or admin)" required>
+                </div>
+                <div class="form-group">
+                    <label>Password:</label>
+                    <input type="password" id="loginPassword" class="form-control" placeholder="Enter your password" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 mt-3">
+                    <i class="fas fa-arrow-right-to-bracket"></i> Sign In
+                </button>
+            </form>
+            <div class="modal-footer text-center mt-3">
+                <span class="text-muted">Don't have an account?</span> 
+                <a href="#" onclick="app.closeModal('loginModal'); app.openRegisterModal();" class="text-primary font-bold">Register Now</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="registerModal">
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-plus text-primary"></i> User & Donor Registration</h3>
+                <button class="modal-close" onclick="app.closeModal('registerModal')">&times;</button>
+            </div>
+            <form id="registerForm" onsubmit="app.handleRegister(event)">
+                <div class="form-row">
+                    <div class="form-group col">
+                        <label>Full Name:</label>
+                        <input type="text" id="regName" class="form-control" placeholder="e.g. Rafiq Ahmed" required>
+                    </div>
+                    <div class="form-group col">
+                        <label>Phone Number (11 digits):</label>
+                        <input type="text" id="regPhone" class="form-control" placeholder="01712345678" pattern="01[0-9]{9}" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col">
+                        <label>Age (15-80):</label>
+                        <input type="number" id="regAge" class="form-control" min="15" max="80" value="21" required>
+                    </div>
+                    <div class="form-group col">
+                        <label>Gender:</label>
+                        <select id="regGender" class="form-control" required>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group col">
+                        <label>Blood Group:</label>
+                        <select id="regBloodGroup" class="form-control" required>
+                            <option value="A+">A+</option>
+                            <option value="A-">A-</option>
+                            <option value="B+">B+</option>
+                            <option value="B-">B-</option>
+                            <option value="AB+">AB+</option>
+                            <option value="AB-">AB-</option>
+                            <option value="O+">O+</option>
+                            <option value="O-">O-</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col">
+                        <label>KUET Hall:</label>
+                        <select id="regHall" class="form-control" required>
+                            <option value="Rokeya Hall">Rokeya Hall</option>
+                            <option value="Amar Ekushey Hall">Amar Ekushey Hall</option>
+                            <option value="Fazlul Haque Hall">Fazlul Haque Hall</option>
+                            <option value="Khan Jahan Ali Hall">Khan Jahan Ali Hall</option>
+                            <option value="Lalan Shah Hall">Lalan Shah Hall</option>
+                            <option value="Dr. M. A. Rashid Hall">Dr. M. A. Rashid Hall</option>
+                            <option value="Shaheed Smrity Hall">Shaheed Smrity Hall</option>
+                        </select>
+                    </div>
+                    <div class="form-group col">
+                        <label>Permanent / Present Address:</label>
+                        <input type="text" id="regAddress" class="form-control" placeholder="e.g. Khulna" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col">
+                        <label>Password (min 4 characters):</label>
+                        <input type="password" id="regPassword" class="form-control" minlength="4" required>
+                    </div>
+                    <div class="form-group col">
+                        <label>Confirm Password:</label>
+                        <input type="password" id="regConfirmPassword" class="form-control" minlength="4" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 mt-3">
+                    <i class="fas fa-check-circle"></i> Complete Registration
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="requestModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="requestModalTitle"><i class="fas fa-hand-holding-medical text-primary"></i> Request Blood</h3>
+                <button class="modal-close" onclick="app.closeModal('requestModal')">&times;</button>
+            </div>
+            <form id="bloodRequestForm" onsubmit="app.handleCreateRequest(event)">
+                <div class="form-group">
+                    <label>Patient Full Name:</label>
+                    <input type="text" id="reqPatientName" class="form-control" placeholder="Patient's name" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col">
+                        <label>Patient Blood Group:</label>
+                        <select id="reqBloodGroup" class="form-control" required>
+                            <option value="A+">A+</option>
+                            <option value="A-">A-</option>
+                            <option value="B+">B+</option>
+                            <option value="B-">B-</option>
+                            <option value="AB+">AB+</option>
+                            <option value="AB-">AB-</option>
+                            <option value="O+">O+</option>
+                            <option value="O-">O-</option>
+                        </select>
+                    </div>
+                    <div class="form-group col">
+                        <label>Units Needed (1-10):</label>
+                        <input type="number" id="reqUnits" class="form-control" min="1" max="10" value="1" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Hospital / Delivery Location in KUET:</label>
+                    <select id="reqLocation" class="form-control" required>
+                        <option value="KUET Medical Center">KUET Medical Center</option>
+                        <option value="Rokeya Hall">Rokeya Hall</option>
+                        <option value="Amar Ekushey Hall">Amar Ekushey Hall</option>
+                        <option value="Fazlul Haque Hall">Fazlul Haque Hall</option>
+                        <option value="Khan Jahan Ali Hall">Khan Jahan Ali Hall</option>
+                        <option value="Lalan Shah Hall">Lalan Shah Hall</option>
+                        <option value="Dr. M. A. Rashid Hall">Dr. M. A. Rashid Hall</option>
+                        <option value="Shaheed Smrity Hall">Shaheed Smrity Hall</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Requester Contact Phone:</label>
+                    <input type="text" id="reqContactPhone" class="form-control" placeholder="017xxxxxxxx" required>
+                </div>
+                <div class="form-group">
+                    <label class="toggle-checkbox emergency-toggle">
+                        <input type="checkbox" id="reqEmergencyCheck">
+                        <span class="toggle-label"><i class="fas fa-triangle-exclamation text-emergency"></i> Mark as EMERGENCY Priority (Immediate Dispatch)</span>
+                    </label>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 mt-3" id="reqSubmitBtn">
+                    <i class="fas fa-paper-plane"></i> Submit Blood Request
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="becomeDonorModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-hand-holding-heart text-primary"></i> Become a Registered Donor</h3>
+                <button class="modal-close" onclick="app.closeModal('becomeDonorModal')">&times;</button>
+            </div>
+            <form id="becomeDonorForm" onsubmit="app.handleBecomeDonorSubmit(event)">
+                <div class="form-group">
+                    <label>Your Registered Phone:</label>
+                    <input type="text" id="bdPhone" class="form-control" placeholder="017xxxxxxxx" required readonly>
+                </div>
+                <div class="form-group">
+                    <label>Last Blood Donation Date (DD-MM-YYYY):</label>
+                    <input type="text" id="bdLastDate" class="form-control" placeholder="e.g. 15-05-2026 or leave N/A">
+                    <small class="text-muted">If you have never donated before, write <b>N/A</b>.</small>
+                </div>
+                <div class="alert alert-info mt-3">
+                    <i class="fas fa-info-circle"></i> Donors must be at least 18 years old and follow the 90-day minimum rest period between donations.
+                </div>
+                <button type="submit" class="btn btn-primary w-100 mt-3">
+                    <i class="fas fa-check"></i> Register as Donor
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div id="toastContainer" class="toast-container"></div>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-col">
+                <h3>KUET LifeFlow</h3>
+                <p>Khulna University of Engineering & Technology (KUET). Dedicated to connecting donors and patients across campus for fast emergency blood support.</p>
+            </div>
+            <div class="footer-col">
+                <h4>System Highlights</h4>
+                <ul>
+                    <li><i class="fas fa-check-circle text-primary"></i> <b>Emergency Dispatch:</b> Prioritized immediate matching</li>
+                    <li><i class="fas fa-check-circle text-primary"></i> <b>Compatibility Guide:</b> Universal donor & recipient mapping</li>
+                    <li><i class="fas fa-check-circle text-primary"></i> <b>Campus Proximity:</b> Fastest route to nearest available donor</li>
+                    <li><i class="fas fa-check-circle text-primary"></i> <b>Live Inventory:</b> Real-time blood vault updates</li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Emergency Contact</h4>
+                <p><i class="fas fa-hospital text-emergency"></i> KUET Medical Center Hotline</p>
+                <p><i class="fas fa-phone"></i> +880 1711-111111</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2026 KUET LifeFlow • Connected to KUET Medical Center
+        </div>
+    </footer>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
